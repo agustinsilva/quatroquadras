@@ -2,22 +2,17 @@ const express = require('express');
 const loginAPI = express();
 const loginController = require('../Controllers/loginController');
 
-loginAPI.get('/', (req, res) => {
-    res.send({ message: "Hello!" }).status(200);
-});
-
+//Login
+//Espera en body {email,password}
 loginAPI.post('/login', async function (req, res) {
-    var user = await loginController.getUser(req.body);
-    if (user != null) {
-        if (user == 'FailPassword') {
-            res.json({ success: false, message: 'Autenticación Fallida. Contraseña incorrecta.' });
-        }else{
-            res.send(user).status(200);
-        }
-    } else {
-        res.json({ success: false, message: 'Autenticación Fallida. Usuario no existe.' });
+    try{
+    var loginInput = req.body;
+    var user = await loginController.getLoginObject(loginInput);
+    res.status(200).send(user)
     }
-
+    catch(error){
+        res.status(400).send(error);
+    }
 });
 
 module.exports = loginAPI;
