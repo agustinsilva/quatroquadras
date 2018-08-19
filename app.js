@@ -5,7 +5,8 @@ const app = express();
 //var User   = require('./app/models/user');
 
 const login = require('./APIs/loginAPI');
+const user = require('./APIs/userAPI');
 
 app.use(bodyParser.json());
-app.use(login);
+app.use(login, user);
 module.exports= app;

@@ -1,6 +1,7 @@
 var loginDB = require('../Adapters/DB/loginDB');
+var cryptoController = require('./cryptoController');
 
-var usersController = function () {
+var loginController = function () {
 
     //Retorna un usuario de base de datos segun un email.
     async function getUser(email) {
@@ -12,7 +13,7 @@ var usersController = function () {
     async function getLoginObject(userLoginData) {
         var user = await getUser(userLoginData.email);
         if (!user) { userNotExist(); }
-        var encryptedPassword = encryptString(userLoginData);
+        var encryptedPassword = cryptoController.encryptString(userLoginData.password);
         var result = (encryptedPassword !== user.password) ? passwordError() : user;
         return result;
     }
@@ -27,16 +28,10 @@ var usersController = function () {
         throw (new Error('Autenticación Fallida. Contraseña incorrecta.'));
     }
 
-    //Encripta la contraseña.
-    function encryptString(rawData) {
-        var ciphertext = crypto.createHash('sha512').update(rawData).digest('hex');
-        return ciphertext.toString();
-    }
-
     return {
         getUser: getUser,
         getLoginObject: getLoginObject
     }
 }();
 
-module.exports = usersController;
+module.exports = loginController;
